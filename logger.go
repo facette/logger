@@ -91,6 +91,11 @@ func Init(logPath, level string) error {
 	return nil
 }
 
+// Logger returns the current logger instance.
+func Logger() *log.Logger {
+	return logger
+}
+
 // Error prints an error message in the logging system.
 func Error(context, format string, v ...interface{}) {
 	printLog(levelError, context, format, v...)
