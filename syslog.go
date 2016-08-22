@@ -1,0 +1,108 @@
+package logger
+
+import (
+	"fmt"
+	"log/syslog"
+)
+
+var (
+	syslogMap = map[int]syslog.Priority{
+		levelError:   syslog.LOG_ERR,
+		levelWarning: syslog.LOG_WARNING,
+		levelNotice:  syslog.LOG_NOTICE,
+		levelInfo:    syslog.LOG_INFO,
+		levelDebug:   syslog.LOG_DEBUG,
+	}
+
+	syslogFacilities = map[string]syslog.Priority{
+		"kern":     syslog.LOG_KERN,
+		"user":     syslog.LOG_USER,
+		"mail":     syslog.LOG_MAIL,
+		"daemon":   syslog.LOG_DAEMON,
+		"auth":     syslog.LOG_AUTH,
+		"syslog":   syslog.LOG_SYSLOG,
+		"lpr":      syslog.LOG_LPR,
+		"news":     syslog.LOG_NEWS,
+		"uucp":     syslog.LOG_UUCP,
+		"cron":     syslog.LOG_CRON,
+		"authpriv": syslog.LOG_AUTHPRIV,
+		"ftp":      syslog.LOG_FTP,
+		"local0":   syslog.LOG_LOCAL0,
+		"local1":   syslog.LOG_LOCAL1,
+		"local2":   syslog.LOG_LOCAL2,
+		"local3":   syslog.LOG_LOCAL3,
+		"local4":   syslog.LOG_LOCAL4,
+		"local5":   syslog.LOG_LOCAL5,
+		"local6":   syslog.LOG_LOCAL6,
+		"local7":   syslog.LOG_LOCAL7,
+	}
+)
+
+type syslogBackend struct {
+	logger *Logger
+	writer *syslog.Writer
+}
+
+func newSyslogBackend(config SyslogConfig, logger *Logger) (backend, error) {
+	var (
+		writer *syslog.Writer
+		err    error
+	)
+
+	// Checl for syslog facility
+	facility, ok := syslogFacilities[config.Facility]
+	if !ok {
+		return nil, ErrInvalidFacility
+	}
+
+	if config.Address != "" {
+		network := config.Transport
+		if network == "" {
+			network = "udp"
+		}
+
+		writer, err = syslog.Dial(network, config.Address, facility, "")
+	} else {
+		writer, err = syslog.New(facility, "")
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize syslog: %s", err)
+	}
+
+	return &syslogBackend{
+		logger: logger,
+		writer: writer,
+	}, nil
+}
+
+func (b syslogBackend) Close() {
+	b.writer.Close()
+}
+
+func (b syslogBackend) Write(level int, context, format string, v ...interface{}) {
+	var mesg string
+
+	if context != "" {
+		mesg = fmt.Sprintf("%s: %s", context, fmt.Sprintf(format, v...))
+	} else {
+		mesg = fmt.Sprintf(format, v...)
+	}
+
+	switch level {
+	case levelError:
+		b.writer.Err(mesg)
+
+	case levelWarning:
+		b.writer.Warning(mesg)
+
+	case levelNotice:
+		b.writer.Notice(mesg)
+
+	case levelInfo:
+		b.writer.Info(mesg)
+
+	case levelDebug:
+		b.writer.Debug(mesg)
+	}
+}
