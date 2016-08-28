@@ -80,15 +80,7 @@ func (b syslogBackend) Close() {
 	b.writer.Close()
 }
 
-func (b syslogBackend) Write(level int, context, format string, v ...interface{}) {
-	var mesg string
-
-	if context != "" {
-		mesg = fmt.Sprintf("%s: %s", context, fmt.Sprintf(format, v...))
-	} else {
-		mesg = fmt.Sprintf(format, v...)
-	}
-
+func (b syslogBackend) Write(level int, mesg string) {
 	switch level {
 	case LevelError:
 		b.writer.Err(mesg)

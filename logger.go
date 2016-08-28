@@ -3,6 +3,7 @@
 package logger
 
 import (
+	"fmt"
 	"log"
 	"sync"
 )
@@ -128,14 +129,28 @@ func (l *Logger) Close() {
 }
 
 func (l *Logger) write(level int, format string, v ...interface{}) {
+	var mesg string
+
 	l.Lock()
 	defer l.Unlock()
 
+	// Set message
+	if l.context != "" {
+		mesg = l.context + ": "
+	}
+
+	if len(v) > 0 {
+		mesg += fmt.Sprintf(format, v...)
+	} else {
+		mesg += format
+	}
+
+	// Write messages to backends
 	l.wg.Add(len(l.backends))
 
 	for _, b := range l.backends {
 		go func(b backend) {
-			b.Write(level, l.context, format, v...)
+			b.Write(level, mesg)
 			l.wg.Done()
 		}(b)
 	}

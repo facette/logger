@@ -77,10 +77,6 @@ func (b fileBackend) Close() {
 	b.output.Close()
 }
 
-func (b fileBackend) Write(level int, context, format string, v ...interface{}) {
-	if context != "" {
-		b.writer.Printf("%s %s: %s", fileLabels[level], context, fmt.Sprintf(format, v...))
-	} else {
-		b.writer.Printf("%s %s", fileLabels[level], fmt.Sprintf(format, v...))
-	}
+func (b fileBackend) Write(level int, mesg string) {
+	b.writer.Printf("%s %s", fileLabels[level], mesg)
 }
