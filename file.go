@@ -12,11 +12,11 @@ import (
 
 var (
 	fileColors = map[int]string{
-		levelError:   "red",
-		levelWarning: "yellow",
-		levelNotice:  "magenta",
-		levelInfo:    "blue",
-		levelDebug:   "cyan",
+		LevelError:   "red",
+		LevelWarning: "yellow",
+		LevelNotice:  "magenta",
+		LevelInfo:    "blue",
+		LevelDebug:   "cyan",
 	}
 
 	fileLabels map[int]string

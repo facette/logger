@@ -7,11 +7,11 @@ import (
 
 var (
 	syslogMap = map[int]syslog.Priority{
-		levelError:   syslog.LOG_ERR,
-		levelWarning: syslog.LOG_WARNING,
-		levelNotice:  syslog.LOG_NOTICE,
-		levelInfo:    syslog.LOG_INFO,
-		levelDebug:   syslog.LOG_DEBUG,
+		LevelError:   syslog.LOG_ERR,
+		LevelWarning: syslog.LOG_WARNING,
+		LevelNotice:  syslog.LOG_NOTICE,
+		LevelInfo:    syslog.LOG_INFO,
+		LevelDebug:   syslog.LOG_DEBUG,
 	}
 
 	syslogFacilities = map[string]syslog.Priority{
@@ -90,19 +90,19 @@ func (b syslogBackend) Write(level int, context, format string, v ...interface{}
 	}
 
 	switch level {
-	case levelError:
+	case LevelError:
 		b.writer.Err(mesg)
 
-	case levelWarning:
+	case LevelWarning:
 		b.writer.Warning(mesg)
 
-	case levelNotice:
+	case LevelNotice:
 		b.writer.Notice(mesg)
 
-	case levelInfo:
+	case LevelInfo:
 		b.writer.Info(mesg)
 
-	case levelDebug:
+	case LevelDebug:
 		b.writer.Debug(mesg)
 	}
 }

@@ -8,19 +8,24 @@ const defaultLevel = "info"
 
 const (
 	_ = iota
-	levelError
-	levelWarning
-	levelNotice
-	levelInfo
-	levelDebug
+	// LevelError represents the error logging level.
+	LevelError
+	// LevelWarning represents the warning logging level.
+	LevelWarning
+	// LevelNotice represents the notice logging level.
+	LevelNotice
+	// LevelInfo represents the info logging level.
+	LevelInfo
+	// LevelDebug represents the debug logging level.
+	LevelDebug
 )
 
 var levelMap = map[string]int{
-	"error":   levelError,
-	"warning": levelWarning,
-	"notice":  levelNotice,
-	"info":    levelInfo,
-	"debug":   levelDebug,
+	"error":   LevelError,
+	"warning": LevelWarning,
+	"notice":  LevelNotice,
+	"info":    LevelInfo,
+	"debug":   LevelDebug,
 }
 
 // Logger represents a logger instance.
@@ -79,31 +84,31 @@ func (l *Logger) Context(context string) *Logger {
 
 // Error prints an error message in the logging system.
 func (l *Logger) Error(format string, v ...interface{}) *Logger {
-	l.write(levelError, format, v...)
+	l.write(LevelError, format, v...)
 	return l
 }
 
 // Warning prints a warning message in the logging system.
 func (l *Logger) Warning(format string, v ...interface{}) *Logger {
-	l.write(levelWarning, format, v...)
+	l.write(LevelWarning, format, v...)
 	return l
 }
 
 // Notice prints a notice message in the logging system.
 func (l *Logger) Notice(format string, v ...interface{}) *Logger {
-	l.write(levelNotice, format, v...)
+	l.write(LevelNotice, format, v...)
 	return l
 }
 
 // Info prints an information message in the logging system.
 func (l *Logger) Info(format string, v ...interface{}) *Logger {
-	l.write(levelInfo, format, v...)
+	l.write(LevelInfo, format, v...)
 	return l
 }
 
 // Debug prints a debug message in the logging system.
 func (l *Logger) Debug(format string, v ...interface{}) *Logger {
-	l.write(levelDebug, format, v...)
+	l.write(LevelDebug, format, v...)
 	return l
 }
 
