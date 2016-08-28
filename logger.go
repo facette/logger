@@ -70,9 +70,11 @@ func NewLogger(configs ...interface{}) (*Logger, error) {
 
 // Context clones the Logger instance and sets the context to the provided string.
 func (l *Logger) Context(context string) *Logger {
-	logger := *l
-	logger.context = context
-	return &logger
+	return &Logger{
+		backends: l.backends,
+		context:  context,
+		wg:       sync.WaitGroup{},
+	}
 }
 
 // Error prints an error message in the logging system.
@@ -119,10 +121,10 @@ func (l *Logger) write(level int, format string, v ...interface{}) {
 	l.wg.Add(len(l.backends))
 
 	for _, b := range l.backends {
-		go func() {
+		go func(b backend) {
 			b.Write(level, l.context, format, v...)
 			l.wg.Done()
-		}()
+		}(b)
 	}
 
 	l.wg.Wait()
