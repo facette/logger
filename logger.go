@@ -2,6 +2,8 @@
 // and "debug".
 package logger
 
+import "sync"
+
 const defaultLevel = "info"
 
 const (
@@ -25,6 +27,10 @@ var levelMap = map[string]int{
 type Logger struct {
 	backends []backend
 	context  string
+
+	wg sync.WaitGroup
+
+	sync.Mutex
 }
 
 // NewLogger returns a new Logger instance initialized with the given configuration.
@@ -32,6 +38,7 @@ func NewLogger(configs ...interface{}) (*Logger, error) {
 	// Initialize logger backends
 	logger := &Logger{
 		backends: []backend{},
+		wg:       sync.WaitGroup{},
 	}
 
 	for _, config := range configs {
@@ -106,7 +113,17 @@ func (l *Logger) Close() {
 }
 
 func (l *Logger) write(level int, format string, v ...interface{}) {
+	l.Lock()
+	defer l.Unlock()
+
+	l.wg.Add(len(l.backends))
+
 	for _, b := range l.backends {
-		go b.Write(level, l.context, format, v...)
+		go func() {
+			b.Write(level, l.context, format, v...)
+			l.wg.Done()
+		}()
 	}
+
+	l.wg.Wait()
 }
