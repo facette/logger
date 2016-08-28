@@ -2,7 +2,10 @@
 // and "debug".
 package logger
 
-import "sync"
+import (
+	"log"
+	"sync"
+)
 
 const defaultLevel = "info"
 
@@ -71,6 +74,11 @@ func NewLogger(configs ...interface{}) (*Logger, error) {
 	}
 
 	return logger, nil
+}
+
+// Logger returns an log.Logger instance for a given logging level.
+func (l *Logger) Logger(level int) *log.Logger {
+	return log.New(newWriter(l, level), "", 0)
 }
 
 // Context clones the Logger instance and sets the context to the provided string.
