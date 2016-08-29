@@ -77,7 +77,7 @@ func NewLogger(configs ...interface{}) (*Logger, error) {
 	return logger, nil
 }
 
-// Logger returns an log.Logger instance for a given logging level.
+// Logger returns a log.Logger instance for a given logging level.
 func (l *Logger) Logger(level int) *log.Logger {
 	return log.New(newWriter(l, level), "", 0)
 }
