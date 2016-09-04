@@ -1,8 +1,8 @@
 # logger: logging handler
 
-[![GoDoc](https://godoc.org/github.com/facette/logger?status.svg)](https://godoc.org/github.com/facette/logger)
-
 Logging handler for Go.
+
+[![GoDoc](https://godoc.org/github.com/facette/logger?status.svg)](https://godoc.org/github.com/facette/logger)
 
 ## Features
 
