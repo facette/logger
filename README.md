@@ -1,5 +1,7 @@
 # logger: logging handler
 
+[![GoDoc](https://godoc.org/github.com/facette/logger?status.svg)](https://godoc.org/github.com/facette/logger)
+
 Logging handler for Go.
 
 ## Features
@@ -52,5 +54,3 @@ will output in `/path/to/file.log`:
 ```
 
 and only sends "this is a sample warning" to syslog on _local7_ facility.
-
-See [documentation](https://godoc.org/github.com/facette/logger) for further details.
