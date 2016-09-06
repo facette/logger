@@ -26,6 +26,7 @@ type fileBackend struct {
 	logger *Logger
 	output *os.File
 	writer *log.Logger
+	level  int
 }
 
 func newFileBackend(config FileConfig, logger *Logger) (backend, error) {
@@ -34,6 +35,12 @@ func newFileBackend(config FileConfig, logger *Logger) (backend, error) {
 		useColors bool
 		err       error
 	)
+
+	if config.Level == "" {
+		config.Level = defaultLevel
+	} else if _, ok := levelMap[config.Level]; !ok {
+		return nil, ErrInvalidLevel
+	}
 
 	if config.Path != "" && config.Path != "-" {
 		// Create parent folders if needed
@@ -70,6 +77,7 @@ func newFileBackend(config FileConfig, logger *Logger) (backend, error) {
 		logger: logger,
 		output: output,
 		writer: writer,
+		level:  levelMap[config.Level],
 	}, nil
 }
 
@@ -78,5 +86,7 @@ func (b fileBackend) Close() {
 }
 
 func (b fileBackend) Write(level int, mesg string) {
-	b.writer.Printf("%s %s", fileLabels[level], mesg)
+	if level <= b.level {
+		b.writer.Printf("%s %s", fileLabels[level], mesg)
+	}
 }

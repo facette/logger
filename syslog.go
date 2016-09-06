@@ -41,6 +41,7 @@ var (
 type syslogBackend struct {
 	logger *Logger
 	writer *syslog.Writer
+	level  int
 }
 
 func newSyslogBackend(config SyslogConfig, logger *Logger) (backend, error) {
@@ -49,7 +50,13 @@ func newSyslogBackend(config SyslogConfig, logger *Logger) (backend, error) {
 		err    error
 	)
 
-	// Checl for syslog facility
+	if config.Level == "" {
+		config.Level = defaultLevel
+	} else if _, ok := levelMap[config.Level]; !ok {
+		return nil, ErrInvalidLevel
+	}
+
+	// Check for syslog facility
 	facility, ok := syslogFacilities[config.Facility]
 	if !ok {
 		return nil, ErrInvalidFacility
@@ -73,6 +80,7 @@ func newSyslogBackend(config SyslogConfig, logger *Logger) (backend, error) {
 	return &syslogBackend{
 		logger: logger,
 		writer: writer,
+		level:  levelMap[config.Level],
 	}, nil
 }
 
@@ -81,6 +89,10 @@ func (b syslogBackend) Close() {
 }
 
 func (b syslogBackend) Write(level int, mesg string) {
+	if level > b.level {
+		return
+	}
+
 	switch level {
 	case LevelError:
 		b.writer.Err(mesg)
