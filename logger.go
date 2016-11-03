@@ -43,6 +43,7 @@ type Logger struct {
 }
 
 // NewLogger returns a new Logger instance initialized with the given configuration.
+// If no configs are passed are parameter, log messages will effectively be discarded.
 func NewLogger(configs ...interface{}) (*Logger, error) {
 	// Initialize logger backends
 	logger := &Logger{
