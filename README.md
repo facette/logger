@@ -2,7 +2,7 @@
 
 Logging handler for Go.
 
-[![GoDoc](https://godoc.org/github.com/facette/logger?status.svg)](https://godoc.org/github.com/facette/logger)
+[![GoDoc](https://godoc.org/facette.io/logger?status.svg)](https://godoc.org/facette.io/logger)
 
 ## Features
 
