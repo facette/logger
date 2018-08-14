@@ -6,14 +6,6 @@ import (
 )
 
 var (
-	syslogMap = map[int]syslog.Priority{
-		LevelError:   syslog.LOG_ERR,
-		LevelWarning: syslog.LOG_WARNING,
-		LevelNotice:  syslog.LOG_NOTICE,
-		LevelInfo:    syslog.LOG_INFO,
-		LevelDebug:   syslog.LOG_DEBUG,
-	}
-
 	syslogFacilities = map[string]syslog.Priority{
 		"kern":     syslog.LOG_KERN,
 		"user":     syslog.LOG_USER,
