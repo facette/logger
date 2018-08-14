@@ -53,23 +53,23 @@ func init() {
 // If no configs are passed are parameter, log messages will effectively be discarded.
 func NewLogger(configs ...interface{}) (*Logger, error) {
 	// Initialize logger backends
-	logger := &Logger{
+	l := &Logger{
 		backends: []backend{},
 		wg:       sync.WaitGroup{},
 	}
 
 	for _, config := range configs {
 		var (
-			backend backend
-			err     error
+			b   backend
+			err error
 		)
 
 		switch config.(type) {
 		case FileConfig:
-			backend, err = newFileBackend(config.(FileConfig), logger)
+			b, err = newFileBackend(config.(FileConfig), l)
 
 		case SyslogConfig:
-			backend, err = newSyslogBackend(config.(SyslogConfig), logger)
+			b, err = newSyslogBackend(config.(SyslogConfig), l)
 
 		default:
 			err = ErrUnsupportedBackend
@@ -79,10 +79,10 @@ func NewLogger(configs ...interface{}) (*Logger, error) {
 			return nil, err
 		}
 
-		logger.backends = append(logger.backends, backend)
+		l.backends = append(l.backends, b)
 	}
 
-	return logger, nil
+	return l, nil
 }
 
 // Logger returns a log.Logger instance for a given logging level.
